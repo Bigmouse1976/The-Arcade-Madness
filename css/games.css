@@ -1,0 +1,43 @@
+﻿/* The Arcade Madness - Game Specific Styles */
+
+.game-canvas {
+    display: block;
+    margin: 0 auto;
+    background: #000;
+    border: 4px solid #fff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.game-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.game-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.game-controls {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.btn {
+    padding: 0.5rem 1.5rem;
+    margin: 0 0.5rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background: #4CAF50;
+    color: white;
+    transition: background 0.3s;
+}
+
+.btn:hover {
+    background: #45a049;
+}
