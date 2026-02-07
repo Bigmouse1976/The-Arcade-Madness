@@ -47,6 +47,9 @@ class TetrisGame extends GameEngine {
         // High score
         this.highScore = this.loadHighScore();
         
+        // Particles
+        this.particles = [];
+        
         // Define tetrominoes
         this.defineTetrominoes();
         
@@ -234,6 +237,7 @@ class TetrisGame extends GameEngine {
         // Reset stats
         this.lines = 0;
         this.comboCount = 0;
+        this.particles = [];
         this.level = 1;
         this.dropSpeed = 1000;
         this.lastDropTime = 0;
@@ -252,6 +256,9 @@ class TetrisGame extends GameEngine {
     }
     
     update(deltaTime) {
+        // Always update particles (even during game over)
+        this.updateParticles(deltaTime);
+        
         if (this.gameOver) return;
         
         // Check if down arrow is held (fast drop)
@@ -463,6 +470,8 @@ class TetrisGame extends GameEngine {
             }
             
             if (filled) {
+                // Spawn particles from cleared line
+                this.spawnLineClearParticles(y);
                 // Remove this line
                 this.grid.splice(y, 1);
                 // Add empty line at top
@@ -521,6 +530,9 @@ class TetrisGame extends GameEngine {
         
         // Draw current piece
         this.drawCurrentPiece();
+        
+        // Draw particles
+        this.drawParticles();
         
         // Draw game over screen
         if (this.gameOver) {
@@ -744,6 +756,66 @@ class TetrisGame extends GameEngine {
             font: '10px "Press Start 2P"',
             align: 'center'
         });
+    }
+    
+    // ============================================
+    // PARTICLES
+    // ============================================
+    
+    spawnLineClearParticles(row) {
+        const particleCount = 4; // per block
+        
+        for (let x = 0; x < this.cols; x++) {
+            const color = this.grid[row][x] || '#FFFFFF';
+            const baseX = x * this.blockSize + this.blockSize / 2;
+            const baseY = row * this.blockSize + this.blockSize / 2;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = 80 + Math.random() * 180;
+                
+                this.particles.push({
+                    x: baseX + (Math.random() - 0.5) * this.blockSize,
+                    y: baseY + (Math.random() - 0.5) * this.blockSize,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed - 60, // slight upward bias
+                    size: 2 + Math.random() * 4,
+                    color: color,
+                    life: 0.6 + Math.random() * 0.6,
+                    maxLife: 0.6 + Math.random() * 0.6,
+                    alpha: 1
+                });
+            }
+        }
+    }
+    
+    updateParticles(deltaTime) {
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+            const p = this.particles[i];
+            
+            p.x += p.vx * deltaTime;
+            p.y += p.vy * deltaTime;
+            p.vy += 200 * deltaTime; // gravity
+            p.life -= deltaTime;
+            p.alpha = Math.max(0, p.life / p.maxLife);
+            p.size *= 0.995; // slowly shrink
+            
+            if (p.life <= 0) {
+                this.particles.splice(i, 1);
+            }
+        }
+    }
+    
+    drawParticles() {
+        this.ctx.save();
+        for (const p of this.particles) {
+            this.ctx.globalAlpha = p.alpha;
+            this.ctx.fillStyle = p.color;
+            this.ctx.shadowColor = p.color;
+            this.ctx.shadowBlur = 6;
+            this.ctx.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
+        }
+        this.ctx.restore();
     }
     
     // ============================================
