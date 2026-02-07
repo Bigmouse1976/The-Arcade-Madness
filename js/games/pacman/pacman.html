@@ -1,28 +1,417 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>Pac-Man - The Arcade Madness</title>
-    <link rel="stylesheet" href="../../css/main.css">
-    <link rel="stylesheet" href="../../css/games.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: #000000;
+            color: #FFFF00;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            touch-action: none;
+        }
+
+        .game-container {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 0.5rem;
+            max-width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: clamp(1rem, 4vw, 2rem);
+            color: #FFFF00;
+            text-shadow: 
+                0 0 10px #FFFF00,
+                0 0 20px #FFFF00;
+            margin-bottom: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 560px;
+            margin: 0 auto 0.5rem;
+            padding: 0.5rem;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #FFFF00;
+        }
+
+        .info-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .info-label {
+            font-size: 0.4rem;
+            color: #00F0FF;
+            margin-bottom: 0.3rem;
+        }
+
+        .info-value {
+            font-size: 0.7rem;
+            color: #FFFF00;
+            text-shadow: 0 0 5px #FFFF00;
+        }
+
+        .lives-display {
+            display: flex;
+            gap: 0.3rem;
+            justify-content: center;
+            margin-top: 0.2rem;
+        }
+
+        .life-icon {
+            width: 12px;
+            height: 12px;
+            background: #FFFF00;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .life-icon::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #000;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+        }
+
+        #gameCanvas {
+            display: block;
+            background: #000000;
+            border: 3px solid #0000FF;
+            box-shadow: 
+                0 0 20px rgba(0, 0, 255, 0.5),
+                inset 0 0 30px rgba(0, 0, 255, 0.1);
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Mobile Touch Controls */
+        .touch-controls {
+            display: none;
+            margin-top: 1rem;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .dpad {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+        }
+
+        .dpad-btn {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 0, 0.2);
+            border: 2px solid #FFFF00;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            touch-action: none;
+            transition: all 0.1s;
+        }
+
+        .dpad-btn:active {
+            background: rgba(255, 255, 0, 0.5);
+            transform: scale(0.95);
+        }
+
+        .dpad-up {
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 10px 10px 0 0;
+        }
+
+        .dpad-down {
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 0 0 10px 10px;
+        }
+
+        .dpad-left {
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            border-radius: 10px 0 0 10px;
+        }
+
+        .dpad-right {
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            border-radius: 0 10px 10px 0;
+        }
+
+        .dpad-center {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(0, 240, 255, 0.2);
+            border-color: #00F0FF;
+            font-size: 0.6rem;
+            color: #00F0FF;
+        }
+
+        .game-controls {
+            margin-top: 0.8rem;
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .pixel-btn {
+            padding: 0.5rem 1rem;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.45rem;
+            color: #000;
+            background: #FFFF00;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 4px 0 0 #999900,
+                0 0 20px rgba(255, 255, 0, 0.5);
+            touch-action: manipulation;
+        }
+
+        .pixel-btn:active {
+            transform: translateY(4px);
+            box-shadow: 
+                0 0 0 0 #999900,
+                0 0 20px rgba(255, 255, 0, 0.8);
+        }
+
+        .pixel-btn.secondary {
+            background: #FF10F0;
+            box-shadow: 
+                0 4px 0 0 #a00a9c,
+                0 0 20px rgba(255, 16, 240, 0.5);
+        }
+
+        .pixel-btn.secondary:active {
+            box-shadow: 
+                0 0 0 0 #a00a9c,
+                0 0 20px rgba(255, 16, 240, 0.8);
+        }
+
+        .instructions {
+            margin-top: 0.8rem;
+            padding: 0.5rem;
+            max-width: 560px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00F0FF;
+            display: none;
+        }
+
+        .instructions.desktop {
+            display: block;
+        }
+
+        .instructions h3 {
+            font-size: 0.5rem;
+            color: #00F0FF;
+            margin-bottom: 0.4rem;
+        }
+
+        .instructions p {
+            font-size: 0.35rem;
+            line-height: 1.5;
+            color: #FFFF00;
+            margin-bottom: 0.2rem;
+        }
+
+        /* Mobile-specific styles */
+        @media (hover: none) and (pointer: coarse) {
+            .touch-controls {
+                display: block;
+            }
+
+            .instructions.desktop {
+                display: none;
+            }
+
+            .game-info {
+                font-size: 0.9em;
+            }
+
+            .pixel-btn {
+                min-height: 44px;
+                padding: 0.6rem 1.2rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .game-container {
+                padding: 0.25rem;
+            }
+
+            h1 {
+                font-size: 0.9rem;
+                margin-bottom: 0.3rem;
+            }
+
+            .game-info {
+                padding: 0.4rem;
+            }
+
+            .info-label {
+                font-size: 0.35rem;
+            }
+
+            .info-value {
+                font-size: 0.6rem;
+            }
+
+            #gameCanvas {
+                border-width: 2px;
+            }
+        }
+
+        @media (orientation: landscape) and (max-height: 500px) {
+            .game-container {
+                flex-direction: row;
+                gap: 1rem;
+            }
+
+            .touch-controls {
+                margin-top: 0;
+            }
+
+            h1 {
+                position: absolute;
+                top: 0.5rem;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+
+        /* Prevent pull-to-refresh on mobile */
+        body {
+            overscroll-behavior: none;
+        }
+    </style>
 </head>
 <body>
     <div class="game-container">
-        <h1>👻 Pac-Man</h1>
+        <h1>👻 PAC-MAN</h1>
+
         <div class="game-info">
-            <div>Score: <span id="score">0</span></div>
-            <div>Lives: <span id="lives">3</span></div>
-            <div>Level: <span id="level">1</span></div>
+            <div class="info-item">
+                <div class="info-label">SCORE</div>
+                <div class="info-value" id="score">0</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">HIGH SCORE</div>
+                <div class="info-value" id="highScore">0</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">LEVEL</div>
+                <div class="info-value" id="level">1</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">LIVES</div>
+                <div class="lives-display" id="lives">
+                    <div class="life-icon"></div>
+                    <div class="life-icon"></div>
+                    <div class="life-icon"></div>
+                </div>
+            </div>
         </div>
+
         <canvas id="gameCanvas" width="560" height="620"></canvas>
+
         <div class="game-controls">
-            <button class="btn" onclick="window.location.href='../../../index.html'">Back to Menu</button>
+            <button class="pixel-btn" id="startBtn">▶ START</button>
+            <button class="pixel-btn" id="pauseBtn">⏸ PAUSE</button>
+            <button class="pixel-btn" id="restartBtn">🔄 RESTART</button>
+            <button class="pixel-btn secondary" id="backBtn">← MENU</button>
+        </div>
+
+        <!-- Touch Controls for Mobile -->
+        <div class="touch-controls">
+            <div class="dpad">
+                <div class="dpad-btn dpad-up" data-direction="up">▲</div>
+                <div class="dpad-btn dpad-down" data-direction="down">▼</div>
+                <div class="dpad-btn dpad-left" data-direction="left">◄</div>
+                <div class="dpad-btn dpad-right" data-direction="right">►</div>
+                <div class="dpad-btn dpad-center" id="pauseTouch">PAUSE</div>
+            </div>
+        </div>
+
+        <div class="instructions desktop">
+            <h3>CONTROLS</h3>
+            <p>🎮 ARROW KEYS or WASD - Move Pac-Man</p>
+            <p>⏸️ SPACE or P - Pause Game</p>
+            <p>🔄 R - Restart Game</p>
+            <p></p>
+            <p>🟡 EAT ALL PELLETS TO WIN</p>
+            <p>⚡ POWER PELLETS LET YOU EAT GHOSTS</p>
+            <p>👻 AVOID GHOSTS OR LOSE A LIFE</p>
+            <p>🍒 BONUS FRUIT FOR EXTRA POINTS</p>
         </div>
     </div>
+
+    <!-- Core Engine Scripts -->
     <script src="../../core/game-engine.js"></script>
     <script src="../../core/input-handler.js"></script>
-    <script src="../../ui/scoreboard.js"></script>
+    <script src="../../core/renderer.js"></script>
+    <script src="../../core/collision-detector.js"></script>
+    <script src="../../core/audio-manager.js"></script>
+    
+    <!-- Pac-Man Game Script -->
     <script src="pacman.js"></script>
 </body>
 </html>

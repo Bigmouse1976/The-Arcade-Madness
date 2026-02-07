@@ -33,7 +33,14 @@ document.addEventListener('DOMContentLoaded', () => {
             description: 'EAT PELLETS AND AVOID THE GHOSTS',
             url: 'js/games/pacman/pacman.html',
             icon: '👻',
-            status: 'coming-soon'
+            status: 'Available'
+        },
+        {
+            name: 'Pixel-Drift',
+            description: 'Retro Top‑Down Racer',
+            url: 'js/games/mobileg/mobileg.html',
+            icon: '🛠️',
+            status: 'Available'
         },
         {
             name: 'Demo Engine',
