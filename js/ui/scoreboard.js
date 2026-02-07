@@ -11,12 +11,12 @@ class Scoreboard {
     }
 
     loadHighScore() {
-        const saved = localStorage.getItem(${this.gameName}_highScore);
+        const saved = localStorage.getItem(`${this.gameName}_highScore`);
         return saved ? parseInt(saved, 10) : 0;
     }
 
     saveHighScore() {
-        localStorage.setItem(${this.gameName}_highScore, this.highScore.toString());
+        localStorage.setItem(`${this.gameName}_highScore`, this.highScore.toString());
     }
 
     addScore(points) {

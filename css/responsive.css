@@ -1,27 +1,377 @@
-﻿/* The Arcade Madness - Responsive Styles */
+/* The Arcade Madness - Responsive Styles */
+/* Mobile and Tablet Optimizations */
 
-@media (max-width: 768px) {
-    header h1 {
-        font-size: 2rem;
+/* Tablet (iPad, etc.) */
+@media (max-width: 1024px) {
+    .container {
+        padding: 1.5rem;
     }
     
-    .game-container {
-        padding: 1rem;
+    .header {
+        padding: 2rem 1rem;
+        margin-bottom: 2rem;
     }
     
-    .game-info {
-        flex-direction: column;
-        gap: 0.5rem;
+    .glitch {
+        font-size: clamp(1.5rem, 4vw, 3rem);
+    }
+    
+    .subtitle {
+        font-size: clamp(0.4rem, 1.8vw, 0.9rem);
+    }
+    
+    .game-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .game-card {
+        padding: 1.5rem;
+    }
+    
+    .game-icon {
+        font-size: 4rem;
     }
 }
 
+/* Mobile Landscape */
+@media (max-width: 768px) and (orientation: landscape) {
+    .header {
+        padding: 1.5rem 1rem;
+    }
+    
+    .glitch {
+        font-size: 2rem;
+    }
+    
+    .subtitle {
+        font-size: 0.6rem;
+    }
+    
+    .game-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .game-card {
+        padding: 1rem;
+    }
+    
+    .game-icon {
+        font-size: 3rem;
+    }
+    
+    .game-card h2 {
+        font-size: 0.9rem;
+    }
+    
+    .game-card p {
+        font-size: 0.5rem;
+        margin-bottom: 1rem;
+    }
+}
+
+/* Mobile Portrait */
+@media (max-width: 768px) {
+    body {
+        font-size: 14px;
+    }
+    
+    .container {
+        padding: 1rem;
+    }
+    
+    .header {
+        padding: 2rem 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .glitch {
+        font-size: clamp(1.2rem, 6vw, 2.5rem);
+        letter-spacing: 0.05em;
+    }
+    
+    .subtitle {
+        font-size: clamp(0.4rem, 2.5vw, 0.7rem);
+        letter-spacing: 0.1em;
+        margin-bottom: 1rem;
+    }
+    
+    .retro-line {
+        width: 80%;
+        height: 3px;
+        margin: 1.5rem auto;
+    }
+    
+    .game-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 1rem 0;
+    }
+    
+    .game-card {
+        padding: 1.5rem 1rem;
+        border-width: 3px;
+    }
+    
+    .game-card:hover {
+        transform: translateY(-5px) scale(1.02);
+    }
+    
+    .game-icon {
+        font-size: 4rem;
+        margin-bottom: 0.8rem;
+    }
+    
+    .game-card h2 {
+        font-size: clamp(0.9rem, 3vw, 1.2rem);
+        margin-bottom: 0.5rem;
+    }
+    
+    .game-card p {
+        font-size: clamp(0.45rem, 2vw, 0.65rem);
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+    
+    .pixel-btn {
+        padding: 0.7rem 1.5rem;
+        font-size: clamp(0.5rem, 2vw, 0.8rem);
+    }
+    
+    .footer {
+        padding: 2rem 1rem 1.5rem;
+        margin-top: 2rem;
+    }
+    
+    .pixel-border {
+        width: 90%;
+        margin-bottom: 1.5rem;
+    }
+    
+    .footer p {
+        font-size: clamp(0.45rem, 2vw, 0.7rem);
+        margin: 0.4rem 0;
+    }
+    
+    .social-links {
+        margin-top: 1rem;
+    }
+    
+    .social-links .pixel-btn {
+        font-size: 0.6rem;
+        padding: 0.6rem 1.2rem;
+    }
+    
+    /* Reduce animation intensity on mobile */
+    .game-card::before {
+        display: none;
+    }
+    
+    /* Simplify glitch effect on mobile for performance */
+    .glitch::before,
+    .glitch::after {
+        animation: none;
+    }
+    
+    /* Status badge adjustment */
+    .status-badge {
+        top: 0.5rem;
+        right: 0.5rem;
+        padding: 0.25rem 0.6rem;
+        font-size: 0.4rem;
+    }
+}
+
+/* Small Mobile Devices */
 @media (max-width: 480px) {
-    header h1 {
+    .container {
+        padding: 0.75rem;
+    }
+    
+    .header {
+        padding: 1.5rem 0.5rem;
+    }
+    
+    .glitch {
+        font-size: clamp(1rem, 7vw, 2rem);
+    }
+    
+    .subtitle {
+        font-size: clamp(0.35rem, 2.8vw, 0.6rem);
+    }
+    
+    .game-grid {
+        gap: 1rem;
+    }
+    
+    .game-card {
+        padding: 1.2rem 0.8rem;
+    }
+    
+    .game-icon {
+        font-size: 3.5rem;
+    }
+    
+    .game-card h2 {
+        font-size: clamp(0.8rem, 3.5vw, 1rem);
+    }
+    
+    .game-card p {
+        font-size: clamp(0.4rem, 2.2vw, 0.6rem);
+        line-height: 1.5;
+    }
+    
+    .pixel-btn {
+        padding: 0.6rem 1.2rem;
+        font-size: clamp(0.45rem, 2.2vw, 0.7rem);
+    }
+    
+    .btn-icon {
+        margin-right: 0.3rem;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    /* Increase touch target sizes */
+    .pixel-btn {
+        min-height: 44px;
+        min-width: 120px;
+    }
+    
+    .game-card {
+        cursor: default;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* Remove hover effects on touch devices */
+    .game-card:hover {
+        transform: none;
+    }
+    
+    /* Add active state for touch feedback */
+    .game-card:active {
+        transform: scale(0.98);
+        opacity: 0.9;
+    }
+    
+    .pixel-btn:active {
+        transform: translateY(2px);
+    }
+    
+    /* Disable animations that might cause performance issues */
+    .game-icon {
+        animation: none;
+    }
+}
+
+/* High DPI / Retina Displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    /* Optimize for crisp rendering on retina displays */
+    .pixel-btn {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+/* Dark mode support (if user prefers) */
+@media (prefers-color-scheme: dark) {
+    /* Already dark by default, but we can adjust if needed */
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    
+    .game-card {
+        transition: none;
+    }
+    
+    .glitch::before,
+    .glitch::after {
+        animation: none !important;
+    }
+}
+
+/* Print styles (just in case) */
+@media print {
+    body::before,
+    #backgroundCanvas {
+        display: none;
+    }
+    
+    .game-card {
+        page-break-inside: avoid;
+    }
+}
+
+/* Landscape orientation on small screens */
+@media (max-height: 500px) and (orientation: landscape) {
+    .header {
+        padding: 1rem 0.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .glitch {
         font-size: 1.5rem;
     }
     
-    .btn {
-        padding: 0.4rem 1rem;
-        font-size: 0.9rem;
+    .subtitle {
+        font-size: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .retro-line {
+        margin: 1rem auto;
+    }
+    
+    .game-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .footer {
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+}
+
+/* Very small devices (watches, tiny screens) */
+@media (max-width: 320px) {
+    .glitch {
+        font-size: 1rem;
+        letter-spacing: 0.02em;
+    }
+    
+    .subtitle {
+        font-size: 0.35rem;
+    }
+    
+    .game-card {
+        padding: 1rem 0.6rem;
+    }
+    
+    .game-icon {
+        font-size: 3rem;
+    }
+    
+    .game-card h2 {
+        font-size: 0.75rem;
+    }
+    
+    .game-card p {
+        font-size: 0.4rem;
+    }
+    
+    .pixel-btn {
+        font-size: 0.4rem;
+        padding: 0.5rem 1rem;
     }
 }

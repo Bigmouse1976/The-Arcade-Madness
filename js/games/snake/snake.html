@@ -1,27 +1,297 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snake - The Arcade Madness</title>
-    <link rel="stylesheet" href="../../css/main.css">
-    <link rel="stylesheet" href="../../css/games.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: #00F0FF;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Scanline effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15),
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .game-container {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 1rem;
+            max-width: 100%;
+        }
+
+        h1 {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            color: #39FF14;
+            text-shadow: 
+                0 0 10px #39FF14,
+                0 0 20px #39FF14,
+                0 0 30px #39FF14;
+            margin-bottom: 0.8rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-around;
+            max-width: 600px;
+            margin: 0 auto 1rem;
+            padding: 0.8rem;
+            background: rgba(0, 0, 0, 0.5);
+            border: 3px solid #39FF14;
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.3);
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-label {
+            font-size: 0.6rem;
+            color: #00F0FF;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-value {
+            font-size: 1.2rem;
+            color: #39FF14;
+            text-shadow: 0 0 10px #39FF14;
+        }
+
+        #gameCanvas {
+            display: block;
+            margin: 0 auto;
+            background: #000000;
+            border: 4px solid #39FF14;
+            box-shadow: 
+                0 0 20px rgba(57, 255, 20, 0.5),
+                inset 0 0 20px rgba(0, 0, 0, 0.5);
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        .game-controls {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.8rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .pixel-btn {
+            padding: 0.8rem 1.5rem;
+            font-family: 'Press Start 2P', cursive;
+            font-size: clamp(0.5rem, 1.5vw, 0.8rem);
+            color: #000;
+            background: #39FF14;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: all 0.3s ease;
+            box-shadow: 
+                0 4px 0 0 #2a8a0f,
+                0 0 20px rgba(57, 255, 20, 0.5);
+        }
+
+        .pixel-btn:hover {
+            transform: translateY(2px);
+            box-shadow: 
+                0 2px 0 0 #2a8a0f,
+                0 0 30px rgba(57, 255, 20, 0.8);
+        }
+
+        .pixel-btn:active {
+            transform: translateY(4px);
+            box-shadow: 
+                0 0 0 0 #2a8a0f,
+                0 0 20px rgba(57, 255, 20, 0.8);
+        }
+
+        .pixel-btn.secondary {
+            background: #FF10F0;
+            box-shadow: 
+                0 4px 0 0 #a00a9c,
+                0 0 20px rgba(255, 16, 240, 0.5);
+        }
+
+        .pixel-btn.secondary:hover {
+            box-shadow: 
+                0 2px 0 0 #a00a9c,
+                0 0 30px rgba(255, 16, 240, 0.8);
+        }
+
+        .pixel-btn.secondary:active {
+            box-shadow: 
+                0 0 0 0 #a00a9c,
+                0 0 20px rgba(255, 16, 240, 0.8);
+        }
+
+        .instructions {
+            margin-top: 1rem;
+            padding: 0.8rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #00F0FF;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+
+        .instructions h3 {
+            font-size: 0.7rem;
+            color: #00F0FF;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 10px #00F0FF;
+        }
+
+        .instructions p {
+            font-size: 0.45rem;
+            line-height: 1.6;
+            color: #FFFF00;
+            margin-bottom: 0.3rem;
+        }
+
+        .difficulty-selector {
+            margin: 1rem 0;
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .difficulty-btn {
+            padding: 0.5rem 1rem;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            background: rgba(0, 240, 255, 0.2);
+            border: 2px solid #00F0FF;
+            color: #00F0FF;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .difficulty-btn:hover {
+            background: rgba(0, 240, 255, 0.4);
+            box-shadow: 0 0 10px #00F0FF;
+        }
+
+        .difficulty-btn.active {
+            background: #00F0FF;
+            color: #000;
+            box-shadow: 0 0 20px #00F0FF;
+        }
+
+        @media (max-width: 768px) {
+            .game-container {
+                padding: 1rem;
+            }
+
+            .game-info {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            #gameCanvas {
+                max-width: 100%;
+                height: auto;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="game-container">
-        <h1>🐍 Snake</h1>
-        <div class="game-info">
-            <div>Score: <span id="score">0</span></div>
-            <div>High Score: <span id="highScore">0</span></div>
+        <h1>🐍 SNAKE</h1>
+        
+        <div class="difficulty-selector">
+            <button class="difficulty-btn" data-speed="150">EASY</button>
+            <button class="difficulty-btn active" data-speed="100">NORMAL</button>
+            <button class="difficulty-btn" data-speed="70">HARD</button>
+            <button class="difficulty-btn" data-speed="40">INSANE</button>
         </div>
-        <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+        <div class="game-info">
+            <div class="info-item">
+                <div class="info-label">SCORE</div>
+                <div class="info-value" id="score">0</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">HIGH SCORE</div>
+                <div class="info-value" id="highScore">0</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">LENGTH</div>
+                <div class="info-value" id="length">3</div>
+            </div>
+        </div>
+
+        <canvas id="gameCanvas" width="560" height="560"></canvas>
+
         <div class="game-controls">
-            <button class="btn" onclick="window.location.href='../../../index.html'">Back to Menu</button>
+            <button class="pixel-btn" id="startBtn">▶ START</button>
+            <button class="pixel-btn" id="pauseBtn">⏸ PAUSE</button>
+            <button class="pixel-btn" id="restartBtn">🔄 RESTART</button>
+            <button class="pixel-btn secondary" id="backBtn">← BACK TO MENU</button>
+        </div>
+
+        <div class="instructions">
+            <h3>CONTROLS</h3>
+            <p>🎮 ARROW KEYS or WASD - Move Snake</p>
+            <p>⏸️ SPACE - Pause Game</p>
+            <p>🔄 R - Restart Game</p>
+            <p>📱 SWIPE - Touch Controls</p>
+            <p></p>
+            <p>🎯 EAT THE FOOD TO GROW</p>
+            <p>💀 DON'T HIT WALLS OR YOURSELF</p>
         </div>
     </div>
+
+    <!-- Core Engine Scripts -->
     <script src="../../core/game-engine.js"></script>
     <script src="../../core/input-handler.js"></script>
-    <script src="../../ui/scoreboard.js"></script>
+    <script src="../../core/renderer.js"></script>
+    <script src="../../core/collision-detector.js"></script>
+    <script src="../../core/audio-manager.js"></script>
+    
+    <!-- Snake Game Script -->
     <script src="snake.js"></script>
 </body>
 </html>
