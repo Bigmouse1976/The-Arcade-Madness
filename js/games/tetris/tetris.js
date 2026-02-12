@@ -883,6 +883,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize game state (but don't start the loop yet)
     game.initializeGame();
     
+    // Mobile controls - d-pad + rotate and drop buttons for Tetris
+    const mobileControls = new MobileControls(game.input, {
+        dpad: true,
+        actionButtons: ['rotate', 'drop'],
+        container: document.body
+    });
+    
     console.log('✅ Tetris ready!');
     console.log('📝 Click START or press P to begin');
 });

@@ -23,7 +23,8 @@ class SnakeGame extends GameEngine {
         this.rows = Math.floor(this.canvas.height / this.gridSize);
         
         // Game settings
-        this.moveSpeed = 100; // milliseconds per move
+        this.baseMoveSpeed = 100; // base speed for selected difficulty
+        this.moveSpeed = 100; // current speed (may change during gameplay)
         this.lastMoveTime = 0;
         this.difficulty = 'normal';
         
@@ -83,12 +84,13 @@ class SnakeGame extends GameEngine {
         const difficultyButtons = document.querySelectorAll('.difficulty-btn');
         difficultyButtons.forEach(btn => {
             btn.addEventListener('click', () => {
-                if (this.isRunning) return; // Can't change during game
+                if (this.isRunning && !this.gameOver) return; // Can't change during active game
                 
                 difficultyButtons.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 
-                this.moveSpeed = parseInt(btn.dataset.speed);
+                this.baseMoveSpeed = parseInt(btn.dataset.speed);
+                this.moveSpeed = this.baseMoveSpeed;
                 this.difficulty = btn.textContent.toLowerCase();
                 console.log(`Difficulty set to: ${this.difficulty} (${this.moveSpeed}ms)`);
             });
@@ -147,6 +149,7 @@ class SnakeGame extends GameEngine {
         this.direction = { x: 1, y: 0 };
         this.nextDirection = { x: 1, y: 0 };
         this.lastMoveTime = 0;
+        this.moveSpeed = this.baseMoveSpeed; // Reset to selected difficulty speed
         
         // Spawn food
         this.spawnFood();
@@ -547,6 +550,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Create game instance
     const game = new SnakeGame();
+    
+    // Mobile controls - d-pad only for snake
+    const mobileControls = new MobileControls(game.input, {
+        dpad: true,
+        actionButtons: [],
+        container: document.body
+    });
     
     console.log('✅ Snake Game ready!');
     console.log('📝 Click START or press SPACE to begin');
